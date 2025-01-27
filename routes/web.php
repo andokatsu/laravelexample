@@ -1,8 +1,13 @@
 <?php
+
 use Illuminate\Support\Facades\Route;
 use Illuminate\Support\Facades\Auth;
+use App\Http\Controllers\Auth\LoginController;
+use App\Http\Controllers\Auth\RegisterController;
 use App\Http\Controllers\EventController;
 use App\Http\Controllers\HomeController;
+use App\Http\Controllers\RoleController;
+use App\Http\Controllers\DashboardController;
 
 /*
 |--------------------------------------------------------------------------
@@ -21,7 +26,7 @@ Route::get('/', function () {
 
 Auth::routes();
 
-Route::get('/home', 'HomeController@index')->name('home');
+Route::get('/home', [HomeController::class, 'index'])->name('home');
 
 Route::middleware('auth')->group(function () {
     Route::resource('events', EventController::class);
@@ -29,6 +34,11 @@ Route::middleware('auth')->group(function () {
 
 // ロールに基づくルート
 Route::middleware(['auth'])->group(function () {
-    Route::get('/dashboard', [RoleController::class, 'redirectToDashboard'])->name('dashboard');
+    Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard');
 });
+
+// ユーザー登録後の画面
+Route::get('/registration-success', function () {
+    return view('auth.register_success');
+})->name('register.success');
 
