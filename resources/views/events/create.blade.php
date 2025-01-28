@@ -1,33 +1,50 @@
-<!-- resources/views/events/create.blade.php -->
-<!DOCTYPE html>
-<html lang="ja">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>イベント作成</title>
-</head>
-<body>
-    <h1>新しいイベントを作成</h1>
+@extends('layouts.app')
 
-    <form action="{{ route('events.store') }}" method="POST">
-        @csrf
+@section('content')
+<div class="container">
+    <div class="row justify-content-center">
+        <div class="col-md-8">
+            <div class="card">
+                <div class="card-header">新規イベント作成</div>
 
-        <label for="title">イベントタイトル</label>
-        <input type="text" name="title" id="title" required><br><br>
+                <div class="card-body">
+                    @if ($errors->any())
+                        <div class="alert alert-danger">
+                            <ul>
+                                @foreach ($errors->all() as $error)
+                                    <li>{{ $error }}</li>
+                                @endforeach
+                            </ul>
+                        </div>
+                    @endif
 
-        <label for="date">日程</label>
-        <input type="date" name="date" id="date" required><br><br>
-
-        <label for="location">場所</label>
-        <input type="text" name="location" id="location" required><br><br>
-
-        <label for="details">詳細</label>
-        <textarea name="details" id="details" required></textarea><br><br>
-
-        <label for="max_capacity">定員</label>
-        <input type="number" name="max_capacity" id="max_capacity" required><br><br>
-
-        <button type="submit">作成</button>
-    </form>
-</body>
-</html>
+                    <form action="{{ route('events.store') }}" method="POST">
+                        @csrf
+                        <div class="form-group">
+                            <label for="title">タイトル</label>
+                            <input type="text" name="title" class="form-control" value="{{ old('title') }}" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="date">日程</label>
+                            <input type="date" name="date" class="form-control" value="{{ old('date') }}" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="location">場所</label>
+                            <input type="text" name="location" class="form-control" value="{{ old('location') }}" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="details">詳細</label>
+                            <textarea name="details" class="form-control" required>{{ old('details') }}</textarea>
+                        </div>
+                        <div class="form-group">
+                            <label for="max_capacity">定員</label>
+                            <input type="number" name="max_capacity" class="form-control" value="{{ old('max_capacity') }}" required>
+                        </div>
+                        <button type="submit" class="btn btn-primary">作成</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+@endsection

@@ -11,7 +11,7 @@
                     <div class="alert alert-success" role="alert">
                         {{ __('ユーザー登録に成功しました。') }}
                     </div>
-                    <a href="{{ route('home') }}" class="btn btn-primary">{{ __('ホームに戻る') }}</a>
+                    <a href="{{ route('welcome') }}" class="btn btn-primary">{{ __('ホームに戻る') }}</a>
                 </div>
             </div>
         </div>

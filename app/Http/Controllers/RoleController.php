@@ -8,18 +8,18 @@ class RoleController extends Controller
 {
     public function redirectToDashboard()
     {
-        $role = Auth::user()->role;
+        $user = Auth::user();
+        $role = $user->role;
 
         switch ($role) {
             case 'admin':
-                return view('admin.dashboard');
+                return view('admin.dashboard', compact('user'));
             case 'organizer':
-                return view('organizer.dashboard');
+                return view('organizer.dashboard', compact('user'));
             case 'user':
-                return view('user.dashboard');
+                return view('user.dashboard', compact('user'));
             default:
                 abort(403, 'Unauthorized action.');
         }
     }
 }
-

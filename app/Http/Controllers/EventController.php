@@ -2,31 +2,33 @@
 
 namespace App\Http\Controllers;
 
-use App\Event;
 use Illuminate\Http\Request;
+use App\Event;
 use Illuminate\Support\Facades\Auth;
 
 class EventController extends Controller
 {
-    // イベント作成フォーム
+    public function index()
+    {
+        $events = Event::where('organizer_id', Auth::id())->get();
+        return view('events.index', compact('events'));
+    }
+
     public function create()
     {
         return view('events.create');
     }
 
-    // イベントの保存
     public function store(Request $request)
     {
-        // バリデーション
         $request->validate([
             'title' => 'required|string|max:255',
             'date' => 'required|date',
             'location' => 'required|string|max:255',
             'details' => 'required|string',
-            'max_capacity' => 'required|integer',
+            'max_capacity' => 'required|integer|min:1',
         ]);
 
-        // イベントの作成
         Event::create([
             'title' => $request->title,
             'date' => $request->date,
@@ -36,73 +38,61 @@ class EventController extends Controller
             'max_capacity' => $request->max_capacity,
         ]);
 
-        return redirect()->route('events.index')->with('success', 'イベントが作成されました');
+        return redirect()->route('events.index')->with('success', 'イベントが作成されました。');
     }
 
-    // イベント編集フォーム
-    public function edit($id)
+    public function edit(Event $event)
     {
-        $event = Event::findOrFail($id);
-
-        if ($event->organizer_id !== Auth::id()) {
-            abort(403, 'アクセス権がありません');
-        }
-
+        $this->authorize('view', $event); // viewポリシーを使用して表示権限を確認
         return view('events.edit', compact('event'));
     }
 
-    // イベントの更新
-    public function update(Request $request, $id)
+    public function update(Request $request, Event $event)
     {
-        // バリデーション
+        $this->authorize('update', $event);
+
         $request->validate([
             'title' => 'required|string|max:255',
             'date' => 'required|date',
             'location' => 'required|string|max:255',
             'details' => 'required|string',
-            'max_capacity' => 'required|integer',
+            'max_capacity' => 'required|integer|min:1',
         ]);
 
-        // イベントの更新
-        $event = Event::findOrFail($id);
+        $event->update([
+            'title' => $request->title,
+            'date' => $request->date,
+            'location' => $request->location,
+            'details' => $request->details,
+            'max_capacity' => $request->max_capacity,
+        ]);
 
-        if ($event->organizer_id !== Auth::id()) {
-            abort(403, 'アクセス権がありません');
-        }
-
-        $event->update($request->all());
-
-        return redirect()->route('events.index')->with('success', 'イベントが更新されました');
+        return redirect()->route('events.index')->with('success', 'イベントが更新されました。');
     }
 
-    // イベントの削除
-    public function destroy($id)
+    public function destroy(Event $event)
     {
-        $event = Event::findOrFail($id);
-
-        if ($event->organizer_id !== Auth::id()) {
-            abort(403, 'アクセス権がありません');
-        }
-
+        $this->authorize('delete', $event);
         $event->delete();
-
-        return redirect()->route('events.index')->with('success', 'イベントが削除されました');
+        return redirect()->route('events.index')->with('success', 'イベントが削除されました。');
     }
 
-    // イベント参加機能
-    public function register($id)
+    public function calendar()
     {
-        $event = Event::findOrFail($id);
+        $events = Event::all()->map(function ($event) {
+            return [
+                'title' => $event->title,
+                'start' => $event->date . 'T00:00:00', // ISO8601形式
+                'url' => route('events.show', $event->id)
+            ];
+        })->toArray(); // Laravel 5.7 では toArray() を追加
 
-        if ($event->current_capacity >= $event->max_capacity) {
-            return back()->with('error', '定員に達しました');
-        }
-
-        // 参加人数を増加
-        $event->current_capacity++;
-        $event->save();
-
-        return back()->with('success', 'イベントに参加しました');
+        return view('events.calendar', ['events' => $events]);
     }
 
+
+    public function show(Event $event)
+    {
+        return view('events.show', compact('event'));
+    }
 }

@@ -19,35 +19,15 @@ class LoginController extends Controller
         $this->middleware('guest')->except('logout');
     }
 
+    protected function authenticated(Request $request, $user)
+    {
+        return redirect('/dashboard');
+    }
+
     protected function sendFailedLoginResponse(Request $request)
     {
-        return back()->withErrors([
-            'email' => 'メールアドレスまたはパスワードが正しくありません。',
-        ])->withInput($request->only('email', 'remember'));
-    }
-
-    public function showLoginForm()
-    {
-        return view('auth.login');
-    }
-
-    public function login(Request $request)
-    {
-        $request->validate([
-            'email' => 'required|email',
-            'password' => 'required',
+        throw ValidationException::withMessages([
+            $this->username() => [trans('auth.failed')],
         ]);
-
-        if (Auth::attempt($request->only('email', 'password'), $request->filled('remember'))) {
-            return redirect()->intended($this->redirectTo);
-        }
-
-        return $this->sendFailedLoginResponse($request);
-    }
-
-    public function logout(Request $request)
-    {
-        Auth::logout();
-        return redirect('/');
     }
 }

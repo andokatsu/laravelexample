@@ -8,6 +8,9 @@
     <!-- Bootstrapの追加 -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
 
+    <!-- FullCalendarのCSS -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/fullcalendar/3.10.2/fullcalendar.min.css" />
+
     <!-- カスタムCSS -->
     <style>
         body {
@@ -73,7 +76,7 @@
         </div>
     </nav>
 
-        <!-- エラーメッセージの表示 -->
+    <!-- エラーメッセージの表示 -->
     @if (session('message'))
         <div class="alert alert-danger">
             {{ session('message') }}
@@ -86,5 +89,11 @@
 
     <!-- BootstrapのJavaScript -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+
+    <!-- FullCalendarのJavaScript -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.29.1/moment.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/fullcalendar/3.10.2/fullcalendar.min.js"></script>
+
+    @yield('scripts')
 </body>
 </html>

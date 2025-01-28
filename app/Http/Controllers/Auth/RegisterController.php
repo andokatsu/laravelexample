@@ -3,11 +3,11 @@
 namespace App\Http\Controllers\Auth;
 
 use App\Http\Controllers\Controller;
-use App\Providers\RouteServiceProvider;
-use App\User;
 use Illuminate\Foundation\Auth\RegistersUsers;
-use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Validator;
+use App\User;
+use Illuminate\Support\Facades\Hash;
+use App\Providers\RouteServiceProvider;
 
 class RegisterController extends Controller
 {
@@ -40,6 +40,6 @@ class RegisterController extends Controller
 
     protected function registered()
     {
-        return redirect()->route('register-success');
+        return redirect()->route('register.success');
     }
 }

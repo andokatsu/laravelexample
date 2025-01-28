@@ -7,7 +7,6 @@ use App\Http\Controllers\Auth\RegisterController;
 use App\Http\Controllers\EventController;
 use App\Http\Controllers\HomeController;
 use App\Http\Controllers\RoleController;
-use App\Http\Controllers\DashboardController;
 
 /*
 |--------------------------------------------------------------------------
@@ -26,15 +25,10 @@ Route::get('/', function () {
 
 Auth::routes();
 
-Route::get('/home', [HomeController::class, 'index'])->name('home');
+Route::get('/dashboard', 'RoleController@redirectToDashboard')->middleware('auth');
 
 Route::middleware('auth')->group(function () {
-    Route::resource('events', EventController::class);
-});
-
-// ロールに基づくルート
-Route::middleware(['auth'])->group(function () {
-    Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard');
+    Route::resource('events', 'EventController');
 });
 
 // ユーザー登録後の画面
@@ -42,3 +36,5 @@ Route::get('/registration-success', function () {
     return view('auth.register_success');
 })->name('register.success');
 
+// イベントカレンダー
+Route::get('/calendar', [EventController::class, 'calendar'])->name('events.calendar');
