@@ -38,3 +38,11 @@ Route::get('/registration-success', function () {
 
 // イベントカレンダー
 Route::get('/calendar', [EventController::class, 'calendar'])->name('events.calendar');
+
+// イベント参加登録とキャンセル
+Route::post('/events/{event}/register', [EventController::class, 'register'])->name('events.register');
+Route::post('/events/{event}/cancel', [EventController::class, 'cancel'])->name('events.cancel');
+
+// 参加者リストとCSVエクスポート
+Route::get('/events/{event}/participants', [EventController::class, 'participants'])->name('events.participants');
+Route::get('/events/{event}/export-csv', [EventController::class, 'exportCsv'])->name('events.exportCsv');

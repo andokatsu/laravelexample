@@ -5,12 +5,13 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use App\Event;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Response;
 
 class EventController extends Controller
 {
     public function index()
     {
-        $events = Event::where('organizer_id', Auth::id())->get();
+        $events = Event::all();
         return view('events.index', compact('events'));
     }
 
@@ -90,9 +91,46 @@ class EventController extends Controller
         return view('events.calendar', ['events' => $events]);
     }
 
-
     public function show(Event $event)
     {
-        return view('events.show', compact('event'));
+        $isRegistered = $event->users()->where('user_id', Auth::id())->exists();
+        return view('events.show', compact('event', 'isRegistered'));
+    }
+
+    // 新しい機能の追加
+    public function register(Event $event)
+    {
+        $event->users()->attach(Auth::id());
+        return redirect()->back()->with('success', 'イベントに参加登録しました。');
+    }
+
+    public function cancel(Event $event)
+    {
+        $event->users()->detach(Auth::id());
+        return redirect()->back()->with('success', 'イベントの参加をキャンセルしました。');
+    }
+
+    public function participants(Event $event)
+    {
+        $participants = $event->users;
+        return view('events.participants', compact('event', 'participants'));
+    }
+
+    public function exportCsv(Event $event)
+    {
+        $participants = $event->users;
+        $csvData = "名前,メールアドレス\n";
+
+        foreach ($participants as $participant) {
+            $csvData .= "{$participant->name},{$participant->email}\n";
+        }
+
+        $fileName = "participants_{$event->id}.csv";
+        $headers = [
+            'Content-Type' => 'text/csv',
+            'Content-Disposition' => "attachment; filename=\"$fileName\"",
+        ];
+
+        return Response::make($csvData, 200, $headers);
     }
 }

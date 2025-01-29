@@ -16,7 +16,7 @@ class CreateEventsTable extends Migration
         Schema::create('events', function (Blueprint $table) {
             $table->increments('id'); // IDフィールド
             $table->string('title'); // イベントタイトル
-            $table->date('date'); // イベント日程
+            $table->date('date')->nullable(); // イベント日程をnullableに設定
             $table->string('location'); // イベント場所
             $table->text('details'); // イベント詳細
             $table->unsignedBigInteger('organizer_id'); // 主催者ID（unsignedBigIntegerを使用）

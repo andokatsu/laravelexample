@@ -6,13 +6,10 @@ use Illuminate\Database\Eloquent\Model;
 
 class Event extends Model
 {
-    protected $fillable = [
-        'title', 'date', 'location', 'details', 'organizer_id', 'max_capacity', 'current_capacity',
-    ];
+    protected $fillable = ['title', 'date', 'location', 'details', 'organizer_id', 'max_capacity', 'current_capacity'];
 
-    // 主催者とのリレーション
-    public function organizer()
+    public function users()
     {
-        return $this->belongsTo(User::class, 'organizer_id');
+        return $this->belongsToMany(User::class);
     }
 }
