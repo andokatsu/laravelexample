@@ -15,6 +15,20 @@
                     @endif
                     <h1>ようこそ、{{ Auth::user()->name }}さん！</h1>
                     <a href="{{ route('events.calendar') }}" class="btn btn-primary mt-3">イベントカレンダー</a>
+
+                    <h5 class="mt-4">統計情報</h5>
+                    <ul>
+                        <li>総イベント数: {{ $totalEvents }}</li>
+                        <li>総参加者数: {{ $totalParticipants }}</li>
+                        <li>総キャンセル数: {{ $totalCancellations }}</li>
+                    </ul>
+
+                    <h5>人気のイベント</h5>
+                    <ul>
+                        @foreach ($popularEvents as $event)
+                            <li>{{ $event->title }} - 参加者数: {{ $event->users_count }}</li>
+                        @endforeach
+                    </ul>
                 </div>
             </div>
         </div>

@@ -66,6 +66,21 @@
                         <form id="logout-form" action="{{ route('logout') }}" method="POST" class="d-none">
                             @csrf
                         </form>
+                        <li class="nav-item dropdown">
+                            <a id="notificationsDropdown" class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                通知 <span class="badge badge-light">{{ Auth::user()->unreadNotifications->count() }}</span>
+                            </a>
+
+                            <div class="dropdown-menu dropdown-menu-right" aria-labelledby="notificationsDropdown">
+                                @forelse (Auth::user()->unreadNotifications as $notification)
+                                    <a class="dropdown-item" href="#">
+                                        {{ $notification->data['message'] }}
+                                    </a>
+                                @empty
+                                    <a class="dropdown-item" href="#">通知はありません</a>
+                                @endforelse
+                            </div>
+                        </li>
                     @endauth
                     @guest
                         <li class="nav-item"><a class="nav-link" href="{{ route('login') }}">ログイン</a></li>

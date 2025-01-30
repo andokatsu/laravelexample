@@ -42,6 +42,7 @@
                             <input type="number" name="max_capacity" class="form-control" value="{{ old('max_capacity', $event->max_capacity) }}" required>
                         </div>
                         <button type="submit" class="btn btn-primary">更新</button>
+                        <a href="{{ url()->previous() }}" class="btn btn-secondary">戻る</a>
                     </form>
                 </div>
             </div>

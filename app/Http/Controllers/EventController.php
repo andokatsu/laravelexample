@@ -4,6 +4,9 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use App\Event;
+use App\Notifications\EventRegistered;
+use App\Notifications\EventCancelled;
+use App\Notifications\EventReminder;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Response;
 
@@ -30,7 +33,7 @@ class EventController extends Controller
             'max_capacity' => 'required|integer|min:1',
         ]);
 
-        Event::create([
+        $event = Event::create([
             'title' => $request->title,
             'date' => $request->date,
             'location' => $request->location,
@@ -38,6 +41,9 @@ class EventController extends Controller
             'organizer_id' => Auth::id(),
             'max_capacity' => $request->max_capacity,
         ]);
+
+        // 新しいイベント登録の通知を送信
+        Auth::user()->notify(new EventRegistered($event));
 
         return redirect()->route('events.index')->with('success', 'イベントが作成されました。');
     }
@@ -94,20 +100,34 @@ class EventController extends Controller
     public function show(Event $event)
     {
         $isRegistered = $event->users()->where('user_id', Auth::id())->exists();
+        $event->load('reviews.user'); // レビューとユーザーをロード
+
         return view('events.show', compact('event', 'isRegistered'));
     }
 
     // 新しい機能の追加
     public function register(Event $event)
     {
+        if ($event->users()->count() >= $event->max_capacity) {
+            return redirect()->route('events.index')->with('error', 'このイベントは定員に達しています。');
+        }
+
         $event->users()->attach(Auth::id());
-        return redirect()->back()->with('success', 'イベントに参加登録しました。');
+
+        // イベント登録の通知を送信
+        Auth::user()->notify(new EventRegistered($event));
+
+        return redirect()->route('events.index')->with('success', 'イベントに参加登録しました。');
     }
 
     public function cancel(Event $event)
     {
         $event->users()->detach(Auth::id());
-        return redirect()->back()->with('success', 'イベントの参加をキャンセルしました。');
+
+        // 参加キャンセルの通知を送信
+        Auth::user()->notify(new EventCancelled($event));
+
+        return redirect()->route('events.index')->with('success', 'イベントの参加をキャンセルしました。');
     }
 
     public function participants(Event $event)
@@ -132,5 +152,13 @@ class EventController extends Controller
         ];
 
         return Response::make($csvData, 200, $headers);
+    }
+
+    // リマインダー通知を送信するメソッド（例: スケジュールされたジョブで呼び出す）
+    public function sendReminder(Event $event)
+    {
+        foreach ($event->users as $user) {
+            $user->notify(new EventReminder($event));
+        }
     }
 }

@@ -4,7 +4,7 @@ use Illuminate\Support\Facades\Schema;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Database\Migrations\Migration;
 
-class ChangeUsersIdToUnsignedBigInteger extends Migration
+class AddCancelledToEventUserTable extends Migration
 {
     /**
      * Run the migrations.
@@ -13,8 +13,8 @@ class ChangeUsersIdToUnsignedBigInteger extends Migration
      */
     public function up()
     {
-        Schema::table('users', function (Blueprint $table) {
-            $table->unsignedBigInteger('id', true)->change(); // IDカラムをunsignedBigIntegerに変更
+        Schema::table('event_user', function (Blueprint $table) {
+            $table->boolean('cancelled')->default(false)->after('user_id');
         });
     }
 
@@ -25,8 +25,8 @@ class ChangeUsersIdToUnsignedBigInteger extends Migration
      */
     public function down()
     {
-        Schema::table('users', function (Blueprint $table) {
-            $table->integer('id')->change(); // 変更を元に戻す（必要に応じて）
+        Schema::table('event_user', function (Blueprint $table) {
+            $table->dropColumn('cancelled');
         });
     }
 }

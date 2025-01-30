@@ -15,6 +15,7 @@
                     @endif
 
                     <a href="{{ route('events.create') }}" class="btn btn-primary mb-3">新規イベント作成</a>
+                    <a href="{{ url()->previous() }}" class="btn btn-secondary mb-3">戻る</a>
 
                     <table class="table">
                         <thead>

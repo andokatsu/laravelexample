@@ -8,6 +8,7 @@
                 <div class="card-header">イベントカレンダー</div>
 
                 <div class="card-body">
+                    <a href="{{ url()->previous() }}" class="btn btn-secondary mb-3">戻る</a>
                     <div id="calendar"></div>
                 </div>
             </div>

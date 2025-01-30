@@ -28,7 +28,7 @@ class User extends Authenticatable
         'password', 'remember_token',
     ];
 
-        public function isAdmin()
+    public function isAdmin()
     {
         return $this->role === 'admin';
     }
@@ -43,4 +43,8 @@ class User extends Authenticatable
         return $this->role === 'user';
     }
 
+    public function events()
+    {
+        return $this->belongsToMany(Event::class, 'event_user', 'user_id', 'event_id');
+    }
 }

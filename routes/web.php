@@ -7,6 +7,7 @@ use App\Http\Controllers\Auth\RegisterController;
 use App\Http\Controllers\EventController;
 use App\Http\Controllers\HomeController;
 use App\Http\Controllers\RoleController;
+use App\Http\Controllers\ReviewController;
 
 /*
 |--------------------------------------------------------------------------
@@ -46,3 +47,6 @@ Route::post('/events/{event}/cancel', [EventController::class, 'cancel'])->name(
 // 参加者リストとCSVエクスポート
 Route::get('/events/{event}/participants', [EventController::class, 'participants'])->name('events.participants');
 Route::get('/events/{event}/export-csv', [EventController::class, 'exportCsv'])->name('events.exportCsv');
+
+// イベントレビュー
+Route::post('/events/{event}/reviews', [ReviewController::class, 'store'])->name('reviews.store');
